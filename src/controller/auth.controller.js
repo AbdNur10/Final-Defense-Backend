@@ -59,12 +59,13 @@ export async function signup(req, res) {
       { expiresIn: "7d" }
     );
 
-    // Set cookie
+    // ✅ FIXED: Set cookie for cross-domain (Vercel → Railway)
     res.cookie("jwt", token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
-      sameSite: "lax", // Changed from "strict" for better compatibility
-      secure: process.env.NODE_ENV === "production",
+      sameSite: "none", // ✅ Required for cross-origin
+      secure: true, // ✅ Required when sameSite is "none"
+      path: "/",
     });
 
     // Return user without password
@@ -103,11 +104,13 @@ export async function login(req, res) {
       { expiresIn: "7d" }
     );
 
+    // ✅ FIXED: Set cookie for cross-domain (Vercel → Railway)
     res.cookie("jwt", token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
+      sameSite: "none", // ✅ Required for cross-origin
+      secure: true, // ✅ Required when sameSite is "none"
+      path: "/",
     });
 
     // Return user without password
@@ -123,7 +126,12 @@ export async function login(req, res) {
 }
 
 export function logout(req, res) {
-  res.clearCookie("jwt");
+  res.clearCookie("jwt", {
+    httpOnly: true,
+    sameSite: "none",
+    secure: true,
+    path: "/",
+  });
   res.status(200).json({ success: true, message: "Logout successful" });
 }
 
