@@ -6,6 +6,7 @@ import {
   getGroupMessages,
   addMembers,
   sendGroupMessage,
+  leaveGroup,
 } from "../controller/group.controller.js";
 
 const router = express.Router();
@@ -23,5 +24,6 @@ router.post("/:groupId/messages", sendGroupMessage);
 
 // Group members
 router.post("/:groupId/members", addMembers);
+router.delete("/:groupId/leave", leaveGroup);
 
 export default router;
